@@ -42,7 +42,8 @@ const TrafficLightMarker: React.FC<TrafficLightMarkerProps> = ({
         cursor: pointer;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         transition: transform 0.2s;
-      " 
+      "
+      onclick="window.trafficLightClick && window.trafficLightClick('${trafficLight.id}')"
       onmouseover="this.style.transform='scale(1.2)'"
       onmouseout="this.style.transform='scale(1)'"
       >
@@ -127,20 +128,16 @@ const TrafficLightMarker: React.FC<TrafficLightMarkerProps> = ({
       removable: true,
     });
 
-    // 마커 클릭 이벤트
-    const markerElement = markerRef.current.getContent();
-    if (markerElement) {
-      markerElement.addEventListener('click', () => {
-        // 다른 열려있는 인포윈도우 닫기
-        infoWindowRef.current.close();
-        
-        // 인포윈도우 열기
-        infoWindowRef.current.open(map, markerRef.current);
-        
-        // 부모 컴포넌트의 onClick 콜백 호출
-        onClick(trafficLight);
-      });
+    // 전역 객체에 인포윈도우 저장 (마커 클릭시 사용)
+    if (!(window as any).trafficLightInfoWindows) {
+      (window as any).trafficLightInfoWindows = {};
     }
+    (window as any).trafficLightInfoWindows[trafficLight.id] = {
+      infoWindow: infoWindowRef.current,
+      marker: markerRef.current,
+      trafficLight: trafficLight,
+      onClick: onClick,
+    };
 
     // 클린업
     return () => {
@@ -149,6 +146,10 @@ const TrafficLightMarker: React.FC<TrafficLightMarkerProps> = ({
       }
       if (infoWindowRef.current) {
         infoWindowRef.current.close();
+      }
+      // 전역 객체에서 제거
+      if ((window as any).trafficLightInfoWindows?.[trafficLight.id]) {
+        delete (window as any).trafficLightInfoWindows[trafficLight.id];
       }
     };
   }, [trafficLight, map, onClick]);

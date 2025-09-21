@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "geocode": "node scripts/geocode-data.js",
+    "geocode:sample": "node scripts/geocode-data.js --sample=100"
+  }
+}

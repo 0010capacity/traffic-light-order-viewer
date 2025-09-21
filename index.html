@@ -5,6 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>경기도 보행자 신호등 우선순위 뷰어</title>
+    <script type="text/javascript">
+      // 환경 변수에서 API 키를 가져와서 스크립트 로드
+      const apiKey = '5be0a34292474922b240a1bd76ad518c';
+      const script = document.createElement('script');
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`;
+      script.onload = function() {
+        console.log('Kakao Maps API loaded successfully');
+      };
+      script.onerror = function() {
+        console.error('Failed to load Kakao Maps API');
+      };
+      document.head.appendChild(script);
+    </script>
   </head>
   <body>
     <div id="root"></div>

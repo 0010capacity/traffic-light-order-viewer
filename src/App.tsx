@@ -3,7 +3,7 @@ import { Header, Sidebar } from './components/UI';
 import { KakaoMap, TrafficLightMarker } from './components/Map';
 import { useKakaoMap } from './hooks/useKakaoMap';
 import { 
-  generateMockTrafficLights, 
+  fetchTrafficLightsFromAPI,
   groupTrafficLightsByIntersection,
   filterTrafficLightsByRegion,
   filterTrafficLightsByPriority,
@@ -25,9 +25,28 @@ function App() {
 
   // 초기 데이터 로드
   useEffect(() => {
-    const mockData = generateMockTrafficLights();
-    setTrafficLights(mockData);
-    setFilteredLights(mockData);
+    // 경기도 오픈 API 점검 중 알림
+    alert(`⚠️ 서비스 점검 안내
+
+경기도 오픈 API가 현재 시스템 점검으로 인해 일시 중지되었습니다.
+
+현재는 샘플 데이터로 서비스 시연이 가능합니다.
+실제 신호등 데이터는 API 정상화 후 이용 가능합니다.`);
+
+    const loadTrafficLights = async () => {
+      try {
+        const apiData = await fetchTrafficLightsFromAPI();
+        setTrafficLights(apiData);
+        setFilteredLights(apiData);
+      } catch (error) {
+        console.error('신호등 데이터 로드 실패:', error);
+        // 에러 발생시 빈 배열로 설정
+        setTrafficLights([]);
+        setFilteredLights([]);
+      }
+    };
+
+    loadTrafficLights();
   }, []);
 
   // 필터링 및 검색 적용
@@ -61,6 +80,26 @@ function App() {
     setMap(mapInstance);
   }, []);
 
+  // 신호등 마커 클릭 처리
+  const handleTrafficLightClick = useCallback((trafficLight: TrafficLight) => {
+    // 해당 신호등이 속한 교차로 찾기
+    const intersection = intersections.find(inter => 
+      inter.trafficLights.some(light => light.id === trafficLight.id)
+    );
+    
+    if (intersection) {
+      setSelectedIntersection(intersection);
+    }
+  }, [intersections]);
+
+  // 마커 클릭 처리 (전역 함수에서 호출)
+  const handleMarkerClick = useCallback((trafficLightId: string) => {
+    const trafficLight = trafficLights.find(light => light.id === trafficLightId);
+    if (trafficLight) {
+      handleTrafficLightClick(trafficLight);
+    }
+  }, [trafficLights, handleTrafficLightClick]);
+
   // 검색 처리
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -85,18 +124,6 @@ function App() {
       map.setLevel(3); // 줌 레벨을 3으로 설정 (더 가까이)
     }
   }, [map]);
-
-  // 신호등 마커 클릭 처리
-  const handleTrafficLightClick = useCallback((trafficLight: TrafficLight) => {
-    // 해당 신호등이 속한 교차로 찾기
-    const intersection = intersections.find(inter => 
-      inter.trafficLights.some(light => light.id === trafficLight.id)
-    );
-    
-    if (intersection) {
-      setSelectedIntersection(intersection);
-    }
-  }, [intersections]);
 
   // 로딩 상태
   if (!isLoaded) {
@@ -138,6 +165,7 @@ function App() {
             center={DEFAULT_MAP_CONFIG.center}
             zoom={DEFAULT_MAP_CONFIG.zoom}
             onMapLoad={handleMapLoad}
+            onMarkerClick={handleMarkerClick}
           >
             {map && filteredLights.map((light) => (
               <TrafficLightMarker
