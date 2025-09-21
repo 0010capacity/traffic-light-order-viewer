@@ -2,16 +2,16 @@
 
 import type { TrafficLight, Intersection } from '../types/traffic-light';
 
-// 경기도 신호등 API 설정 (현재 서버 점검 중이므로 Mock 데이터 사용)
-const GYEONGGI_API_CONFIG = {
-  BASE_URL: 'https://openapi.gg.go.kr/Signlamp',
-  KEY: 'd85ffe8364ba4dd78d23750d37510328',
-  DEFAULT_PARAMS: {
-    Type: 'json',
-    pIndex: 1,
-    pSize: 100,
-  },
-};
+// 경기도 신호등 API 설정 (현재 서버 점검 중이므로 Mock 데이터 사용) - 비활성화
+// const GYEONGGI_API_CONFIG = {
+//   BASE_URL: 'https://openapi.gg.go.kr/Signlamp',
+//   KEY: 'd85ffe8364ba4dd78d23750d37510328',
+//   DEFAULT_PARAMS: {
+//     Type: 'json',
+//     pIndex: 1,
+//     pSize: 100,
+//   },
+// };
 
 // 카카오 지오코딩 서비스를 이용한 주소 -> 좌표 변환
 export const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
