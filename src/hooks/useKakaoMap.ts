@@ -18,10 +18,11 @@ export const useKakaoMap = () => {
       return;
     }
 
-    // 스크립트 태그 생성
+    // 스크립트 태그 생성 - CORS 문제 해결을 위해 crossorigin 속성 추가
     const script = document.createElement('script');
     script.src = `${API_CONFIG.KAKAO_MAP_URL}?appkey=${API_CONFIG.KAKAO_MAP_API_KEY}&autoload=false`;
     script.async = true;
+    script.crossOrigin = 'anonymous'; // CORS 문제 해결
 
     // 스크립트 로드 성공
     script.onload = () => {
@@ -36,7 +37,7 @@ export const useKakaoMap = () => {
 
     // 스크립트 로드 실패
     script.onerror = () => {
-      setError('Kakao Maps API 스크립트 로드에 실패했습니다.');
+      setError('Kakao Maps API 스크립트 로드에 실패했습니다. 네트워크 연결과 API 키를 확인해주세요.');
     };
 
     // 문서에 스크립트 추가

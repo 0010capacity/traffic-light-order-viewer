@@ -41,7 +41,7 @@ export const GYEONGGI_REGIONS = [
 // API 설정
 export const API_CONFIG = {
   KAKAO_MAP_API_KEY: import.meta.env.VITE_KAKAO_MAP_API_KEY,
-  KAKAO_MAP_URL: 'https://dapi.kakao.com/v2/maps/sdk.js',
+  KAKAO_MAP_URL: '//dapi.kakao.com/v2/maps/sdk.js',
 };
 
 // 마커 아이콘 설정
